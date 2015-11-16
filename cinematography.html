@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<title>Camera Examples</title>
+		<style>
+			body {margin: 0px; }
+			canvas { width: 100%; height: 100%;}
+		</style>
+	</head>
+	<body>
+		<script src="lib/three.min.js"></script>
+		<script src="dat.gui.min.js"></script>
+		<script src="js/controls/TrackballControls.js"></script>
+		<script>
+			var viewAbove = true; // true for low, false for high
+
+			document.addEventListener('keydown', function(event) { // listener for keypressed
+				if(event.keyCode == 49)
+					viewAbove = true;
+				if(event.keyCode == 50)
+					viewAbove = false; // go to low camera
+			})
+
+			var teapot = new THREE.Object3D();
+			var movieCamera = new THREE.Object3D();
+
+			var camera1 = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000); //low camera
+			camera1.position.y = 10;
+			camera1.position.z = 60;
+
+			var camera2 = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000); //high camera
+			camera2.position.x = 0;
+			camera2.position.y = 40;
+			camera2.position.z = 100;
+
+			var scene = new THREE.Scene();
+			scene.add(camera1);
+			scene.add(camera2);
+
+			var renderer = new THREE.WebGLRenderer({antialias:true});
+			renderer.autoClear = false;
+
+			var controls = new THREE.TrackballControls( camera1, renderer.donElement);
+
+			init();
+			animate();
+
+			function init() {
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				document.body.appendChild( renderer.domElement );
+
+				var ambientLight = new THREE.AmbientLight( 0x333333 );
+				scene.add( ambientLight );
+
+				var light = new THREE.DirectionalLight( 0xFFFFFF, 0.5);
+				scene.add( light );
+
+				var floorMaterial = new THREE.ImageUtils.loadTexture( 'checker.jpg');
+				var material = new THREE.MeshBasicMaterial ( {map: floorMaterial, side: THREE.DoubleSide});
+				var geometry = new THREE.PlaneBufferGeometry( 100, 100);
+				
+				var plane = new THREE.Mesh( geometry, material );
+				plane.rotation.x = 90 * Math.PI/180;
+				scene.add( plane );
+
+				var loader = new THREE.JSONLoader();
+
+				loader.load('wr_teapot.json', 
+						function( geometry, materials) {
+							var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
+							teapot = new THREE.Mesh( geometry, material );
+							teapot.scale.set(20, 20, 20);
+							scene.add( teapot );
+						});
+
+				// loader.load('movieCamera.json', 
+				// 		function( geometry, materials) {
+				// 			var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
+				// 			movieCamera = new THREE.Mesh( geometry, material );
+				// 			//movieCamera.scale.set(200, 200, 200);
+				// 			//scene.add( movieCamera );
+				// 		});
+
+				render();
+
+			}
+
+			function animate() {
+				requestAnimationFrame( animate );
+			}
+
+			function render() {
+				var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+				
+				if (viewAbove) { // render low camera
+					renderer.render( scene, camera1);
+					controls.enabled = true;
+					controls.update();
+				}
+				else { // render high camera
+					renderer.render( scene, camera2); 
+					camera2.lookAt(teapot.position);
+					controls.enabled = false;
+				}
+
+				//movieCamera.postion.copy(camera1.position );
+
+				
+				requestAnimationFrame( render );
+			}
+
+
+		</script>
+	</body>
+</html>
