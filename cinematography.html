@@ -14,10 +14,21 @@
 			var viewAbove = true; // true for low, false for high
 
 			document.addEventListener('keydown', function(event) { // listener for keypressed
-				if(event.keyCode == 49)
+				if(event.keyCode == 49) {
 					viewAbove = true;
-				if(event.keyCode == 50)
+					view2 = false;
+					view3 = false;
+				}
+				if(event.keyCode == 50){
 					viewAbove = false; // go to low camera
+					view2 = true;
+					view3 = false;
+				}
+				if(event.keyCode == 51) {
+					viewAbove = false; // go to low camera
+					view2 = false;
+					view3 = true;
+				}
 			})
 
 			var teapot = new THREE.Object3D();
@@ -31,6 +42,12 @@
 			camera2.position.x = 0;
 			camera2.position.y = 40;
 			camera2.position.z = 100;
+
+			var camera3 = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000); //high camera
+			camera3.rotation.y = 180 * Math.PI/180;
+			camera3.position.x = 0;
+			camera3.position.y = 40;
+			camera3.position.z = -100;
 
 			var scene = new THREE.Scene();
 			scene.add(camera1);
@@ -74,13 +91,14 @@
 							scene.add( teapot );
 						});
 
-				// loader.load('movieCamera.json', 
-				// 		function( geometry, materials) {
-				// 			var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
-				// 			movieCamera = new THREE.Mesh( geometry, material );
-				// 			//movieCamera.scale.set(200, 200, 200);
-				// 			//scene.add( movieCamera );
-				// 		});
+				loader.load('movieCamera.json', 
+						function( geometry, materials) {
+							var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
+							movieCamera = new THREE.Mesh( geometry, material );
+							movieCamera.scale.set(4, 4, 4);
+							movieCamera.position.set(0, 10, 60);
+							scene.add( movieCamera );
+						});
 
 				render();
 
@@ -88,6 +106,8 @@
 
 			function animate() {
 				requestAnimationFrame( animate );
+				movieCamera.position.set(camera1.position.x, camera1.position.y, camera1.position.z);
+
 			}
 
 			function render() {
@@ -98,14 +118,17 @@
 					controls.enabled = true;
 					controls.update();
 				}
-				else { // render high camera
+				else if (view2) { // render high camera
 					renderer.render( scene, camera2); 
 					camera2.lookAt(teapot.position);
 					controls.enabled = false;
 				}
 
-				//movieCamera.postion.copy(camera1.position );
-
+				else if (view3) { // render high camera
+					renderer.render( scene, camera3); 
+					camera3.lookAt(teapot.position);
+					controls.enabled = false;
+				}
 				
 				requestAnimationFrame( render );
 			}
