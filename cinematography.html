@@ -32,6 +32,7 @@
 			})
 
 			var teapot = new THREE.Object3D();
+			//var dragon = new THREE.Object3D();
 			var movieCamera = new THREE.Object3D();
 
 			var camera1 = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000); //low camera
@@ -89,6 +90,15 @@
 							teapot = new THREE.Mesh( geometry, material );
 							teapot.scale.set(20, 20, 20);
 							scene.add( teapot );
+						});
+
+				loader.load('bunny.json', 
+						function( geometry, materials) {
+							var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
+							bunny = new THREE.Mesh( geometry, material );
+							bunny.scale.set(2, 2, 2);
+							bunny.position.set(25, 0, 15);
+							scene.add( bunny );
 						});
 
 				loader.load('movieCamera.json', 
