@@ -8,11 +8,10 @@
 	</head>
 	<body>
 		<script src="lib/three.min.js"></script>
-		<script src="dat.gui.min.js"></script>
+		<script type="text/javascript" src="dat.gui.min.js"></script>
 		<script src="js/controls/TrackballControls.js"></script>
 		<script>
-			var viewAbove = true; // true for low, false for high
-
+			//------------Event Listener------------------------//
 			document.addEventListener('keydown', function(event) { // listener for keypressed
 				if(event.keyCode == 49) {
 					viewAbove = true;
@@ -30,6 +29,43 @@
 					view3 = true;
 				}
 			})
+			//----------------------------------------------//
+			//-----------DAT GUI------------------------------//
+			var gui = new dat.GUI();
+
+			var parameters = {
+				cameras: "One"
+			};
+
+			var cameras = gui.add( parameters, 'cameras', ["One", "Two", "Three"]).name('Camera');
+			cameras.onChange(function(value) {
+				updateGUIScene();
+			});
+
+			function updateGUIScene() {
+				var value = parameters.cameras;
+				if (value == "One") {
+					viewAbove = true;
+					view2 = false;
+					view3 = false;
+				}
+				else if (value == "Two") {
+					viewAbove = false;
+					view2 = true;
+					view3 = false;
+				}
+				else if (value == "Three") {
+					viewAbove = false;
+					view2 =false;
+					view3 = true;
+				}
+
+			}
+			//----------------------------------------------//
+			//----------------Three JS code ---------------//
+			var viewAbove = true; 
+			var view2 = false;
+			var view3 = false;
 
 			var teapot = new THREE.Object3D();
 			var movieCamera = new THREE.Object3D();
@@ -56,7 +92,7 @@
 			var renderer = new THREE.WebGLRenderer({antialias:true});
 			renderer.autoClear = false;
 
-			var controls = new THREE.TrackballControls( camera1, renderer.donElement);
+			//var controls = new THREE.TrackballControls( camera1);
 
 			init();
 			animate();
@@ -115,25 +151,25 @@
 				
 				if (viewAbove) { // render low camera
 					renderer.render( scene, camera1);
-					controls.enabled = true;
-					controls.update();
+					// controls.enabled = true;
+					// controls.update();
 				}
 				else if (view2) { // render high camera
 					renderer.render( scene, camera2); 
 					camera2.lookAt(teapot.position);
-					controls.enabled = false;
+					//controls.enabled = false;
 				}
 
 				else if (view3) { // render high camera
 					renderer.render( scene, camera3); 
 					camera3.lookAt(teapot.position);
-					controls.enabled = false;
+					//controls.enabled = false;
 				}
 				
 				requestAnimationFrame( render );
 			}
 
-
+			//--------------------------------------------//
 		</script>
 	</body>
 </html>
