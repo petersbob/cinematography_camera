@@ -142,7 +142,7 @@
 							var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
 							movieCamera = new THREE.Mesh( geometry, material );
 							movieCamera.scale.set(4, 4, 4);
-							movieCamera.position.set(0, 10, 60);
+							//movieCamera.position.set(camera1.position.x, camera1.position.y, camera1.position.z+5);
 							scene.add( movieCamera );
 						});
 
@@ -152,17 +152,17 @@
 
 			function animate() {
 				requestAnimationFrame( animate );
-				movieCamera.position.set(camera1.position.x, camera1.position.y, camera1.position.z);
-
+				movieCamera.position.set(camera1.position.x, camera1.position.y, camera1.position.z+6);
 			}
 
 			function render() {
 				var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+				movieCamera.lookAt(teapot.position);
 				
 				if (viewAbove) { // render low camera
 					renderer.render( scene, camera1);
-					// controls.enabled = true;
-					// controls.update();
+					//controls.enabled = true;
+					//controls.update();
 				}
 				else if (view2) { // render high camera
 					renderer.render( scene, camera2); 
