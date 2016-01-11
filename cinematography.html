@@ -34,13 +34,30 @@
 			var gui = new dat.GUI();
 
 			var parameters = {
-				cameras: "One"
+				cameras: "One",
+				dollyzoom: 45,
+				fov: 45
 			};
 
 			var cameras = gui.add( parameters, 'cameras', ["One", "Two", "Three"]).name('Camera');
+			var dollyzoom = gui.add( parameters, 'dollyzoom' ).min(20).max(60).step(1).name('Doly Zoom').listen();
+			dollyzoom.onChange(function(value)
+			{   camera1.position.z = 120 - parameters.dollyzoom;
+				camera1.fov = parameters.dollyzoom;
+				console.log("Position: ",camera1.position.z, "FOV: ", camera1.fov);
+				camera1.updateProjectionMatrix();
+			 });
+			// var fov = gui.add( parameters, 'fov').min(10).max(100).step(1).name("Field of View").listen();
+
 			cameras.onChange(function(value) {
 				updateGUIScene();
 			});
+
+			// fov.onChange(function(value) {
+			// 	camera1.position.z = 25 - parameters.fov; //control dolly
+			// 	camera1.fov = parameters.fov;
+			// 	camera1.updateProjectionMatrix();
+			// });
 
 			function updateGUIScene() {
 				var value = parameters.cameras;
@@ -132,7 +149,7 @@
 						function( geometry, materials) {
 							var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
 							bunny = new THREE.Mesh( geometry, material );
-							bunny.scale.set(2, 2, 2);
+							bunny.scale.set(20, 20, 20);
 							bunny.position.set(25, 0, 15);
 							scene.add( bunny );
 						});
@@ -163,17 +180,20 @@
 					renderer.render( scene, camera1);
 					//controls.enabled = true;
 					//controls.update();
+					movieCamera.visible = false;
 				}
 				else if (view2) { // render high camera
 					renderer.render( scene, camera2); 
 					camera2.lookAt(teapot.position);
 					//controls.enabled = false;
+					movieCamera.visible = true;
 				}
 
 				else if (view3) { // render high camera
 					renderer.render( scene, camera3); 
 					camera3.lookAt(teapot.position);
 					//controls.enabled = false;
+					movieCamera.visible = true;
 				}
 				
 				requestAnimationFrame( render );
