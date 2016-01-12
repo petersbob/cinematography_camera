@@ -35,16 +35,14 @@
 
 			var parameters = {
 				cameras: "One",
-				dollyzoom: 45,
-				fov: 45
+				dollyzoom: 0,
 			};
 
 			var cameras = gui.add( parameters, 'cameras', ["One", "Two", "Three"]).name('Camera');
-			var dollyzoom = gui.add( parameters, 'dollyzoom' ).min(20).max(60).step(1).name('Doly Zoom').listen();
+			var dollyzoom = gui.add( parameters, 'dollyzoom' ).min(-30).max(30).step(1).name('Doly Zoom').listen();
 			dollyzoom.onChange(function(value)
-			{   camera1.position.z = 120 - parameters.dollyzoom;
-				camera1.fov = parameters.dollyzoom;
-				console.log("Position: ",camera1.position.z, "FOV: ", camera1.fov);
+			{   camera1.position.z = 50 + parameters.dollyzoom;
+				camera1.fov = 75 - parameters.dollyzoom;
 				camera1.updateProjectionMatrix();
 			 });
 			// var fov = gui.add( parameters, 'fov').min(10).max(100).step(1).name("Field of View").listen();
@@ -89,8 +87,8 @@
 			var movieCamera = new THREE.Object3D();
 
 			var camera1 = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000); //low camera
-			camera1.position.y = 10;
-			camera1.position.z = 60;
+			camera1.position.y = 15;
+			camera1.position.z = 50;
 
 			var camera2 = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000); //high camera
 			camera2.position.x = 0;
@@ -147,11 +145,35 @@
 
 				loader.load('bunny.json', 
 						function( geometry, materials) {
-							var material = new THREE.MeshLambertMaterial( {color: 0xff0000} );
-							bunny = new THREE.Mesh( geometry, material );
-							bunny.scale.set(20, 20, 20);
-							bunny.position.set(25, 0, 15);
-							scene.add( bunny );
+							var material = new THREE.MeshLambertMaterial( {color: 0xff00ff} );
+							bunny1 = new THREE.Mesh( geometry, material );
+							bunny1.scale.set(20, 20, 20);
+							bunny1.position.set(25, 0, 5);
+							material = new THREE.MeshLambertMaterial( {color: 0xff3300} );
+							bunny2 = new THREE.Mesh( geometry, material );
+							bunny2.scale.set(20, 20, 20);
+							bunny2.position.set(-25, 0, 5);
+							scene.add( bunny1 );
+							scene.add( bunny2 );
+						});
+
+				loader.load('Column.json', 
+						function( geometry, materials) {
+							var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
+							column1 = new THREE.Mesh( geometry, material );
+							material = new THREE.MeshLambertMaterial( {color: 0x0000ff} );
+							column2 = new THREE.Mesh( geometry, material );
+							material = new THREE.MeshLambertMaterial( {color: 0x00ffff} );
+							column3 = new THREE.Mesh( geometry, material );
+							column1.scale.set(.25, .25, .25);
+							column1.position.set(-30, 0, -15);
+							column2.scale.set(.25, .25, .25);
+							column2.position.set(30, 0, -15);
+							column3.scale.set(.25, .25, .25);
+							column3.position.set(0, 0, -15);
+							scene.add( column1 );
+							scene.add( column2 );
+							scene.add( column3 );
 						});
 
 				loader.load('movieCamera.json', 
@@ -174,7 +196,7 @@
 
 			function render() {
 				var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-				movieCamera.lookAt(teapot.position);
+				//camera1.lookAt(teapot.position);
 				
 				if (viewAbove) { // render low camera
 					renderer.render( scene, camera1);
